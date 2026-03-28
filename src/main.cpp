@@ -27,8 +27,15 @@ int main() {
     Player player;
 
     while (window.isOpen()) {
+        sf::Event event;
+
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
         player.draw(window);
         window.display();
         window.clear(sf::Color::Black);
     }
+    return 0;
 }
