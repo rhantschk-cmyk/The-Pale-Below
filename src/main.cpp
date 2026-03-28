@@ -3,6 +3,7 @@
 //Initialasation
 
 #include <SFML/Graphics.hpp>
+#include <string>
 
 const float WIDTH = 1000.f;
 const float HEIGHT = 1600.f;
@@ -34,6 +35,19 @@ public:
     void draw(sf::RenderWindow& window) {window.draw(shape);}
 };
 
+class Platform {
+public:
+    sf::RectangleShape shape;
+
+    Platform(const float x, const float y, const float width, const float height) {
+        shape.setSize(sf::Vector2f(width, height));
+        shape.setFillColor(sf::Color::Red);
+        shape.setPosition(x, y);
+    }
+
+    void draw(sf::RenderWindow& window) {window.draw(shape);}
+};
+
 //Functions
 
 void update_window(sf::RenderWindow& window) {
@@ -52,14 +66,26 @@ void update_player(sf::RenderWindow& window, Player& player) {
     player.gravity();
 }
 
+void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window) {
+    for (auto& platform : platforms) {
+        platform.draw(window);
+    }
+}
+
+bool collision(const sf::RectangleShape a, const sf::RectangleShape b) {return a.getGlobalBounds().intersects(b.getGlobalBounds());}
+
 //Mainloop
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "2D Game");
     Player player;
+    std::vector<Platform> platforms;
+
+    platforms.push_back(Platform(60.f, 60.f, 50.f, 10.f));
 
     while (window.isOpen()) {
         update_player(window, player);
+        update_platforms(platforms, window);
         update_window(window);
     }
     return 0;
