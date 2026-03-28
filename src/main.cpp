@@ -32,6 +32,14 @@ public:
         shape.move(0.f, falling_speed);
     }
 
+    void collides(int i) {
+        if (i == 1) {
+            touching_ground = true;
+        } else {
+            touching_ground = false;
+        }
+    }
+
     void draw(sf::RenderWindow& window) {window.draw(shape);}
 };
 
@@ -50,6 +58,8 @@ public:
 
 //Functions
 
+bool collision(const sf::RectangleShape& a, const sf::RectangleShape& b) {return a.getGlobalBounds().intersects(b.getGlobalBounds());}
+
 void update_window(sf::RenderWindow& window) {
     sf::Event event;
 
@@ -66,13 +76,14 @@ void update_player(sf::RenderWindow& window, Player& player) {
     player.gravity();
 }
 
-void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window) {
+void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window, Player& player) {
     for (auto& platform : platforms) {
+        if (collision(platform.shape, player.shape)) {
+            player.collides(1);
+        }
         platform.draw(window);
     }
 }
-
-bool collision(const sf::RectangleShape a, const sf::RectangleShape b) {return a.getGlobalBounds().intersects(b.getGlobalBounds());}
 
 //Mainloop
 
@@ -81,11 +92,11 @@ int main() {
     Player player;
     std::vector<Platform> platforms;
 
-    platforms.push_back(Platform(60.f, 60.f, 50.f, 10.f));
+    platforms.push_back(Platform(30.f, 70.f, 100.f, 10.f));
 
     while (window.isOpen()) {
         update_player(window, player);
-        update_platforms(platforms, window);
+        update_platforms(platforms, window, player);
         update_window(window);
     }
     return 0;
