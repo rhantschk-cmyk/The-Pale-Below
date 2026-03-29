@@ -17,6 +17,8 @@ class Player {
 public:
     //Player Hitbox
     sf::RectangleShape shape;
+    //Player position from previous frame
+    sf::Vector2f last_position;
     //If true Player will fall downwards
     bool touching_ground = false;
     //How fast the Player gains speed when falling
@@ -32,6 +34,11 @@ public:
         shape.setSize(sf::Vector2f(20.f, 20.f));
         shape.setFillColor(sf::Color::Blue);
         shape.setPosition(50.f, 50.f);
+        last_position = shape.getPosition();
+    }
+    //Saves Player position before movement
+    void save_last_position() {
+        last_position = shape.getPosition();
     }
     //Falling if not touching ground
     void gravity() {
@@ -105,6 +112,7 @@ void update_window(sf::RenderWindow& window) {
 //All Player Code Here
 void update_player(sf::RenderWindow& window, Player& player) {
     player.draw(window);
+    player.save_last_position();
     player.movement();
     player.jump();
     player.gravity();
@@ -113,11 +121,25 @@ void update_player(sf::RenderWindow& window, Player& player) {
 //Platform function
 //includes Player collision with platforms
 void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window, Player& player) {
+    player.collides(0);
     for (auto& platform : platforms) {
         if (collision(platform.shape, player.shape)) {
-            player.collides(1);
-        } else {
-            player.collides(0);
+            sf::FloatRect player_bounds = player.shape.getGlobalBounds();
+            sf::FloatRect platform_bounds = platform.shape.getGlobalBounds();
+            sf::FloatRect last_player_bounds(player.last_position, player.shape.getSize());
+
+            if (last_player_bounds.top + last_player_bounds.height <= platform_bounds.top) {
+                player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top - player_bounds.height);
+                player.falling_speed = 0.f;
+                player.collides(1);
+            } else if (last_player_bounds.top >= platform_bounds.top + platform_bounds.height) {
+                player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top + platform_bounds.height);
+                player.falling_speed = 0.f;
+            } else if (last_player_bounds.left + last_player_bounds.width <= platform_bounds.left) {
+                player.shape.setPosition(platform_bounds.left - player_bounds.width, player.shape.getPosition().y);
+            } else if (last_player_bounds.left >= platform_bounds.left + platform_bounds.width) {
+                player.shape.setPosition(platform_bounds.left + platform_bounds.width, player.shape.getPosition().y);
+            }
         }
         platform.draw(window);
     }
