@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
 
 //Window
 const float WIDTH = 1000.f;
@@ -22,6 +23,10 @@ public:
     const float gravity_force = 0.05f;
     //actual downspeed of Player
     float falling_speed= 0.f;
+    //How fast the Player moves left and right
+    const float movement_speed = 0.2f;
+    //How strong the Player jumps upwards
+    const float jump_force = -3.f;
 
     Player() {
         shape.setSize(sf::Vector2f(20.f, 20.f));
@@ -43,6 +48,24 @@ public:
             touching_ground = true;
         } else {
             touching_ground = false;
+        }
+    }
+    //Moves Player left and right
+    void movement() {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+            shape.move(-movement_speed, 0.f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+            shape.move(movement_speed, 0.f);
+        }
+    }
+    //Lets Player jump while touching ground
+    void jump() {
+        if (touching_ground == true) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                touching_ground = false;
+                falling_speed = jump_force;
+            }
         }
     }
     //Draw Function für window logic
@@ -82,6 +105,8 @@ void update_window(sf::RenderWindow& window) {
 //All Player Code Here
 void update_player(sf::RenderWindow& window, Player& player) {
     player.draw(window);
+    player.movement();
+    player.jump();
     player.gravity();
 }
 
@@ -91,6 +116,8 @@ void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window
     for (auto& platform : platforms) {
         if (collision(platform.shape, player.shape)) {
             player.collides(1);
+        } else {
+            player.collides(0);
         }
         platform.draw(window);
     }
