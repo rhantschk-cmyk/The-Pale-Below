@@ -9,6 +9,8 @@
 //Window
 const float WIDTH = 1000.f;
 const float HEIGHT = 1600.f;
+const float CENTER_X = WIDTH / 2.f - 10.f;
+const float CENTER_Y = HEIGHT / 2.f - 10.f;
 
 
 //Classes
@@ -95,6 +97,8 @@ public:
     }
     //Draw function for window logic
     void draw(sf::RenderWindow& window) {window.draw(shape);}
+    //Moves Platform for screen scrolling
+    void move(const float x, const float y) {shape.move(x, y);}
 };
 
 class Enemy {
@@ -109,6 +113,7 @@ public:
     }
 
     void draw(sf::RenderWindow& window) {window.draw(shape);}
+    void move(const float x, const float y) {shape.move(x, y);}
 };
 
 //Functions
@@ -129,8 +134,7 @@ void update_window(sf::RenderWindow& window) {
 
 //Player function
 //All Player Code Here
-void update_player(sf::RenderWindow& window, Player& player) {
-    player.draw(window);
+void update_player(Player& player) {
     player.save_last_position();
     if (player.health > 0) {
         player.movement();
@@ -139,9 +143,26 @@ void update_player(sf::RenderWindow& window, Player& player) {
     player.gravity();
 }
 
+//Camera function
+//keeps Player centered by moving the world
+void update_camera(std::vector<Platform>& platforms, std::vector<Enemy>& enemys, Player& player) {
+    float offset_x = CENTER_X - player.shape.getPosition().x;
+    float offset_y = CENTER_Y - player.shape.getPosition().y;
+
+    player.shape.move(offset_x, offset_y);
+
+    for (auto& platform : platforms) {
+        platform.move(offset_x, offset_y);
+    }
+
+    for (auto& enemy : enemys) {
+        enemy.move(offset_x, offset_y);
+    }
+}
+
 //Platform function
 //includes Player collision with platforms
-void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window, Player& player) {
+void update_platforms(std::vector<Platform>& platforms, Player& player) {
     player.collides(0);
     for (auto& platform : platforms) {
         if (collision(platform.shape, player.shape)) {
@@ -162,13 +183,18 @@ void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window
                 player.shape.setPosition(platform_bounds.left + platform_bounds.width, player.shape.getPosition().y);
             }
         }
+    }
+}
+
+void draw_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window) {
+    for (auto& platform : platforms) {
         platform.draw(window);
     }
 }
 
 //Enemy function
 
-void update_enemys(std::vector<Enemy>& enemys, sf::RenderWindow& window, Player& player) {
+void update_enemys(std::vector<Enemy>& enemys, Player& player) {
     for (auto& enemy : enemys) {
         if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {
             player.health -= 20;
@@ -184,6 +210,11 @@ void update_enemys(std::vector<Enemy>& enemys, sf::RenderWindow& window, Player&
         } else if (enemy.attack_cooldown < 120) {
             enemy.attack_cooldown++;
         }
+    }
+}
+
+void draw_enemys(std::vector<Enemy>& enemys, sf::RenderWindow& window) {
+    for (auto& enemy : enemys) {
         enemy.draw(window);
     }
 }
@@ -197,6 +228,9 @@ int main() {
     std::vector<Platform> platforms;
     std::vector<Enemy> enemys;
 
+    player.shape.setPosition(CENTER_X, CENTER_Y);
+    player.last_position = player.shape.getPosition();
+
     //Test-Platform
     platforms.push_back(Platform(0.f, 800.f, 1000.f, 10.f));
     //Test Gegner
@@ -204,10 +238,14 @@ int main() {
 
     //Calling update functions while window not closed
     while (window.isOpen()) {
-        update_platforms(platforms, window, player);
-        update_enemys(enemys, window, player);
+        update_player(player);
+        update_platforms(platforms, player);
+        update_enemys(enemys, player);
+        update_camera(platforms, enemys, player);
+        draw_platforms(platforms, window);
+        draw_enemys(enemys, window);
+        player.draw(window);
         update_window(window);
-        update_player(window, player);
     }
     //End of the Code
     return 0;
