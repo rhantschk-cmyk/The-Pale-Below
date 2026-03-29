@@ -22,13 +22,17 @@ public:
     //If true Player will fall downwards
     bool touching_ground = false;
     //How fast the Player gains speed when falling
-    const float gravity_force = 0.05f;
+    const float gravity_force = 0.01f;
     //actual downspeed of Player
     float falling_speed= 0.f;
     //How fast the Player moves left and right
     const float movement_speed = 0.2f;
     //How strong the Player jumps upwards
-    const float jump_force = -3.f;
+    const float jump_force = -1.3f;
+    //How strong the Player gets pushed upwards after taking damage
+    const float damage_jump_force = -1.f;
+    //How far the Player gets pushed away from an Enemy
+    const float damage_knockback = 40.f;
     int health = 100;
 
     Player() {
@@ -168,7 +172,15 @@ void update_enemys(std::vector<Enemy>& enemys, sf::RenderWindow& window, Player&
     for (auto& enemy : enemys) {
         if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {
             player.health -= 20;
+
+            if (player.shape.getPosition().x < enemy.shape.getPosition().x) {
+                player.shape.move(-player.damage_knockback, 0.f);
+            } else {
+                player.shape.move(player.damage_knockback, 0.f);
+            }
             enemy.attack_cooldown = 0;
+            player.touching_ground = false;
+            player.falling_speed = player.damage_jump_force;
         } else if (enemy.attack_cooldown < 120) {
             enemy.attack_cooldown++;
         }
