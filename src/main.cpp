@@ -29,6 +29,7 @@ public:
     const float movement_speed = 0.2f;
     //How strong the Player jumps upwards
     const float jump_force = -3.f;
+    int health = 100;
 
     Player() {
         shape.setSize(sf::Vector2f(20.f, 20.f));
@@ -85,10 +86,24 @@ public:
 
     Platform(const float x, const float y, const float width, const float height) {
         shape.setSize(sf::Vector2f(width, height));
-        shape.setFillColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Green);
         shape.setPosition(x, y);
     }
     //Draw function for window logic
+    void draw(sf::RenderWindow& window) {window.draw(shape);}
+};
+
+class Enemy {
+public:
+    sf::RectangleShape shape;
+    int attack_cooldown = 120;
+
+    Enemy(const float x, const float y) {
+        shape.setSize(sf::Vector2f(20.f, 20.f));
+        shape.setFillColor(sf::Color::Red);
+        shape.setPosition(x, y);
+    }
+
     void draw(sf::RenderWindow& window) {window.draw(shape);}
 };
 
@@ -113,8 +128,10 @@ void update_window(sf::RenderWindow& window) {
 void update_player(sf::RenderWindow& window, Player& player) {
     player.draw(window);
     player.save_last_position();
-    player.movement();
-    player.jump();
+    if (player.health > 0) {
+        player.movement();
+        player.jump();
+    }
     player.gravity();
 }
 
@@ -145,6 +162,20 @@ void update_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window
     }
 }
 
+//Enemy function
+
+void update_enemys(std::vector<Enemy>& enemys, sf::RenderWindow& window, Player& player) {
+    for (auto& enemy : enemys) {
+        if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {
+            player.health -= 20;
+            enemy.attack_cooldown = 0;
+        } else if (enemy.attack_cooldown < 120) {
+            enemy.attack_cooldown++;
+        }
+        enemy.draw(window);
+    }
+}
+
 //Mainloop
 
 int main() {
@@ -152,15 +183,19 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "2D Game");
     Player player;
     std::vector<Platform> platforms;
+    std::vector<Enemy> enemys;
 
     //Test-Platform
-    platforms.push_back(Platform(30.f, 70.f, 100.f, 10.f));
+    platforms.push_back(Platform(0.f, 800.f, 1000.f, 10.f));
+    //Test Gegner
+    enemys.push_back(Enemy(500.f, 780.f));
 
     //Calling update functions while window not closed
     while (window.isOpen()) {
-        update_player(window, player);
         update_platforms(platforms, window, player);
+        update_enemys(enemys, window, player);
         update_window(window);
+        update_player(window, player);
     }
     //End of the Code
     return 0;
