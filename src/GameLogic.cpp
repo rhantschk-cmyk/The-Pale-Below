@@ -23,6 +23,7 @@ void update_player(Player& player) {
     if (player.health > 0) {
         player.movement();
         player.jump();
+        player.attack();
     }
     player.gravity();
 }
