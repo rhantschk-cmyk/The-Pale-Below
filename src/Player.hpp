@@ -37,6 +37,10 @@ public:
         shape.setPosition(50.f, 50.f);
         last_position = shape.getPosition();
         attack_shape.setFillColor(sf::Color::Yellow);
+
+        if (texture_loaded() == true) {
+            shape.setTexture(&texture());
+        }
     }
     //Saves Player position before movement
     void save_last_position() {
@@ -121,5 +125,16 @@ public:
         if (attacking == true) {
             window.draw(attack_shape);
         }
+    }
+
+private:
+    static sf::Texture& texture() {
+        static sf::Texture player_texture;
+        return player_texture;
+    }
+
+    static bool texture_loaded() {
+        static bool loaded = texture().loadFromFile("assets/textures/player.png");
+        return loaded;
     }
 };

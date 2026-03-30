@@ -1,0 +1,6 @@
+Drop these files here and they will be loaded automatically:
+
+platform.png
+player.png
+bug-enemy.png
+enemy.png

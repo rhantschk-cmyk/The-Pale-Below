@@ -54,17 +54,21 @@ void update_platforms(std::vector<Platform>& platforms, Player& player) {
             sf::FloatRect player_bounds = player.shape.getGlobalBounds();
             sf::FloatRect platform_bounds = platform.shape.getGlobalBounds();
             sf::FloatRect last_player_bounds(player.last_position, player.shape.getSize());
+            float player_center_x = player_bounds.left + player_bounds.width / 2.f;
+            bool center_over_platform = player_center_x >= platform_bounds.left && player_center_x <= platform_bounds.left + platform_bounds.width;
+            bool horizontal_overlap = player_bounds.left + player_bounds.width > platform_bounds.left && player_bounds.left < platform_bounds.left + platform_bounds.width;
+            bool vertical_overlap = player_bounds.top + player_bounds.height > platform_bounds.top && player_bounds.top < platform_bounds.top + platform_bounds.height;
 
-            if (player.falling_speed >= 0.f && player_bounds.top < platform_bounds.top) {
+            if (last_player_bounds.top + last_player_bounds.height <= platform_bounds.top && horizontal_overlap && center_over_platform) {
                 player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top - player_bounds.height);
                 player.falling_speed = 0.f;
                 player.collides(1);
-            } else if (player.falling_speed < 0.f && player_bounds.top > platform_bounds.top) {
+            } else if (last_player_bounds.top >= platform_bounds.top + platform_bounds.height && horizontal_overlap) {
                 player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top + platform_bounds.height);
                 player.falling_speed = 0.f;
-            } else if (last_player_bounds.left + last_player_bounds.width <= platform_bounds.left) {
+            } else if (last_player_bounds.left + last_player_bounds.width <= platform_bounds.left && vertical_overlap) {
                 player.shape.setPosition(platform_bounds.left - player_bounds.width, player.shape.getPosition().y);
-            } else if (last_player_bounds.left >= platform_bounds.left + platform_bounds.width) {
+            } else if (last_player_bounds.left >= platform_bounds.left + platform_bounds.width && vertical_overlap) {
                 player.shape.setPosition(platform_bounds.left + platform_bounds.width, player.shape.getPosition().y);
             }
         }

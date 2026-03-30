@@ -40,7 +40,7 @@ brew install sfml
 Clone the repository and run the following command from the project root:
 
 ```bash
-g++ src/main.cpp src/GameLogic.cpp -o build/game -lsfml-graphics -lsfml-window -lsfml-system
+g++ src/main.cpp src/GameLogic.cpp src/DemoLevel.cpp -o build/game -lsfml-graphics -lsfml-window -lsfml-system
 ```
 
 Then run the game:
@@ -61,7 +61,7 @@ build\game.exe
 
 - [x] Core movement & physics
 - [x] Basic game loop
-- [ ] Textures & art assets
+- [x] Test-Textures & art assets
 - [ ] Story & world design
 - [ ] Audio
 

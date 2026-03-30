@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Config.hpp"
+#include "DemoLevel.hpp"
 #include "Enemy.hpp"
 #include "GameLogic.hpp"
 #include "Platform.hpp"
@@ -21,10 +22,7 @@ int main() {
     player.shape.setPosition(CENTER_X, CENTER_Y);
     player.last_position = player.shape.getPosition();
 
-    //Test-Platform
-    platforms.push_back(Platform(0.f, 800.f, 1000.f, 10.f));
-    //Test Gegner
-    enemys.push_back(Enemy("bug", 500.f, 780.f));
+    build_demo_level(platforms, enemys);
 
     //Calling update functions while window not closed
     while (window.isOpen()) {

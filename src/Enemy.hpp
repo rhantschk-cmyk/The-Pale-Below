@@ -24,6 +24,13 @@ public:
 
         if (type == "bug") {
             health = 20;
+            if (bug_texture_loaded() == true) {
+                shape.setTexture(&bug_texture());
+            }
+        } else if (type == "enemy") {
+            if (enemy_texture_loaded() == true) {
+                shape.setTexture(&enemy_texture());
+            }
         }
     }
 
@@ -31,5 +38,26 @@ public:
     void move(const float x, const float y) {
         shape.move(x, y);
         start_x += x;
+    }
+
+private:
+    static sf::Texture& bug_texture() {
+        static sf::Texture texture;
+        return texture;
+    }
+
+    static bool bug_texture_loaded() {
+        static bool loaded = bug_texture().loadFromFile("assets/textures/bug-enemy.png");
+        return loaded;
+    }
+
+    static sf::Texture& enemy_texture() {
+        static sf::Texture texture;
+        return texture;
+    }
+
+    static bool enemy_texture_loaded() {
+        static bool loaded = enemy_texture().loadFromFile("assets/textures/enemy.png");
+        return loaded;
     }
 };
