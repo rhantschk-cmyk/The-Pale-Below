@@ -86,6 +86,17 @@ void update_enemys(std::vector<Enemy>& enemys, Player& player) {
     for (int i = 0; i < enemys.size(); i++) {
         Enemy& enemy = enemys[i];
 
+        if (player.attacking == true && collision(enemy.shape, player.attack_shape) && enemy.last_hit_attack != player.attack_id) {
+            enemy.health -= 10;
+            enemy.last_hit_attack = player.attack_id;
+        }
+
+        if (enemy.health <= 0) {
+            enemys.erase(enemys.begin() + i);
+            i--;
+            continue;
+        }
+
         if (enemy.type == "bug") {
             enemy.shape.move(enemy.patrol_speed * enemy.patrol_direction, 0.f);
 
@@ -95,16 +106,6 @@ void update_enemys(std::vector<Enemy>& enemys, Player& player) {
             } else if (enemy.shape.getPosition().x >= enemy.start_x + enemy.patrol_range) {
                 enemy.shape.setPosition(enemy.start_x + enemy.patrol_range, enemy.shape.getPosition().y);
                 enemy.patrol_direction = -1;
-            }
-
-            if (player.attacking == true && collision(enemy.shape, player.attack_shape) && enemy.last_hit_attack != player.attack_id) {
-                enemy.health -= 10;
-                enemy.last_hit_attack = player.attack_id;
-            }
-
-            if (enemy.health <= 0) {
-                enemys.erase(enemys.begin() + i);
-                i--;
             }
         } else {
             if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {

@@ -15,6 +15,7 @@
 int main() {
     //Initialization 
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "2D Game");
+    window.setFramerateLimit(60);
     Player player;
     std::vector<Platform> platforms;
     std::vector<Enemy> enemys;

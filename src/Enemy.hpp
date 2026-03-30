@@ -10,7 +10,7 @@ public:
     int attack_cooldown = 120;
     int health = 0;
     float start_x = 0.f;
-    float patrol_speed = 0.05f;
+    float patrol_speed = 1.f;
     float patrol_range = 100.f;
     int patrol_direction = 1;
     int last_hit_attack = -1;
@@ -28,6 +28,7 @@ public:
                 shape.setTexture(&bug_texture());
             }
         } else if (type == "enemy") {
+            health = 20;
             if (enemy_texture_loaded() == true) {
                 shape.setTexture(&enemy_texture());
             }

@@ -11,13 +11,13 @@ public:
     //If true Player will fall downwards
     bool touching_ground = false;
     //How fast the Player gains speed when falling
-    const float gravity_force = 0.01f;
+    const float gravity_force = 0.2f;
     //actual downspeed of Player
     float falling_speed = 0.f;
     //How fast the Player moves left and right
-    const float movement_speed = 0.2f;
+    const float movement_speed = 2.f;
     //How strong the Player jumps upwards
-    const float jump_force = -1.3f;
+    const float jump_force = -9.f;
     //How strong the Player gets pushed upwards after taking damage
     const float damage_jump_force = -1.f;
     //How far the Player gets pushed away from an Enemy
@@ -26,7 +26,7 @@ public:
     bool attacking = false;
     bool last_attack_input = false;
     int attack_timer = 0;
-    const int attack_duration = 20;
+    const int attack_duration = 10;
     int last_direction = 1;
     int attack_id = 0;
     int health = 100;
