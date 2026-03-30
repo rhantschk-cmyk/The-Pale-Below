@@ -24,7 +24,7 @@ int main() {
     //Test-Platform
     platforms.push_back(Platform(0.f, 800.f, 1000.f, 10.f));
     //Test Gegner
-    enemys.push_back(Enemy(500.f, 780.f));
+    enemys.push_back(Enemy("bug", 500.f, 780.f));
 
     //Calling update functions while window not closed
     while (window.isOpen()) {

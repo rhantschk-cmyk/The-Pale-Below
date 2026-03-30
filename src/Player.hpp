@@ -28,6 +28,7 @@ public:
     int attack_timer = 0;
     const int attack_duration = 20;
     int last_direction = 1;
+    int attack_id = 0;
     int health = 100;
 
     Player() {
@@ -99,6 +100,7 @@ public:
         if (attack_input && last_attack_input == false && attacking == false) {
             attacking = true;
             attack_timer = attack_duration;
+            attack_id++;
             update_attack_position();
         }
 

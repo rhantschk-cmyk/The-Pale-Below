@@ -55,11 +55,11 @@ void update_platforms(std::vector<Platform>& platforms, Player& player) {
             sf::FloatRect platform_bounds = platform.shape.getGlobalBounds();
             sf::FloatRect last_player_bounds(player.last_position, player.shape.getSize());
 
-            if (last_player_bounds.top + last_player_bounds.height <= platform_bounds.top) {
+            if (player.falling_speed >= 0.f && player_bounds.top < platform_bounds.top) {
                 player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top - player_bounds.height);
                 player.falling_speed = 0.f;
                 player.collides(1);
-            } else if (last_player_bounds.top >= platform_bounds.top + platform_bounds.height) {
+            } else if (player.falling_speed < 0.f && player_bounds.top > platform_bounds.top) {
                 player.shape.setPosition(player.shape.getPosition().x, platform_bounds.top + platform_bounds.height);
                 player.falling_speed = 0.f;
             } else if (last_player_bounds.left + last_player_bounds.width <= platform_bounds.left) {
@@ -79,20 +79,44 @@ void draw_platforms(std::vector<Platform>& platforms, sf::RenderWindow& window) 
 
 //Enemy function
 void update_enemys(std::vector<Enemy>& enemys, Player& player) {
-    for (auto& enemy : enemys) {
-        if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {
-            player.health -= 20;
+    for (int i = 0; i < enemys.size(); i++) {
+        Enemy& enemy = enemys[i];
 
-            if (player.shape.getPosition().x < enemy.shape.getPosition().x) {
-                player.shape.move(-player.damage_knockback, 0.f);
-            } else {
-                player.shape.move(player.damage_knockback, 0.f);
+        if (enemy.type == "bug") {
+            enemy.shape.move(enemy.patrol_speed * enemy.patrol_direction, 0.f);
+
+            if (enemy.shape.getPosition().x <= enemy.start_x) {
+                enemy.shape.setPosition(enemy.start_x, enemy.shape.getPosition().y);
+                enemy.patrol_direction = 1;
+            } else if (enemy.shape.getPosition().x >= enemy.start_x + enemy.patrol_range) {
+                enemy.shape.setPosition(enemy.start_x + enemy.patrol_range, enemy.shape.getPosition().y);
+                enemy.patrol_direction = -1;
             }
-            enemy.attack_cooldown = 0;
-            player.touching_ground = false;
-            player.falling_speed = player.damage_jump_force;
-        } else if (enemy.attack_cooldown < 120) {
-            enemy.attack_cooldown++;
+
+            if (player.attacking == true && collision(enemy.shape, player.attack_shape) && enemy.last_hit_attack != player.attack_id) {
+                enemy.health -= 10;
+                enemy.last_hit_attack = player.attack_id;
+            }
+
+            if (enemy.health <= 0) {
+                enemys.erase(enemys.begin() + i);
+                i--;
+            }
+        } else {
+            if (collision(enemy.shape, player.shape) && enemy.attack_cooldown == 120) {
+                player.health -= 20;
+
+                if (player.shape.getPosition().x < enemy.shape.getPosition().x) {
+                    player.shape.move(-player.damage_knockback, 0.f);
+                } else {
+                    player.shape.move(player.damage_knockback, 0.f);
+                }
+                enemy.attack_cooldown = 0;
+                player.touching_ground = false;
+                player.falling_speed = player.damage_jump_force;
+            } else if (enemy.attack_cooldown < 120) {
+                enemy.attack_cooldown++;
+            }
         }
     }
 }
