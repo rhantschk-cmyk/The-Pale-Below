@@ -2,7 +2,7 @@ The Pale Below
 
 A 2D Metroidvania built in C++ with SFML.
 
-⚠️ **Early Development** – Core mechanics are implemented but the game currently has no textures or story. What you see is a work in progress.
+⚠️ **Early Development** – Core mechanics are implemented but the game currently has only test-textures and no story. What you see is a work in progress.
 
 ---
 
