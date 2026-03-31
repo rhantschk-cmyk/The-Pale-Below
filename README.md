@@ -12,6 +12,12 @@ The Pale Below is a 2D Metroidvania currently in solo development. The fundament
 
 ---
 
+##Windows
+
+Download and run [install.exe](installer/install.exe) file in the installer folder.
+
+##macOS & Linux
+
 ## Requirements
 
 - A C++ compiler with C++17 support (e.g. **g++**)
@@ -23,10 +29,6 @@ The Pale Below is a 2D Metroidvania currently in solo development. The fundament
 ```bash
 sudo apt install libsfml-dev
 ```
-
-**Windows (MinGW)**
-
-Download SFML from [sfml-dev.org](https://www.sfml-dev.org/download.php) and follow the setup instructions for MinGW.
 
 **macOS (Homebrew)**
 ```bash
@@ -48,12 +50,9 @@ Then run the game:
 ```bash
 # Linux / macOS
 ./build/game
-
-# Windows
-build\game.exe
 ```
 
-> Make sure the `build/` directory exists before compiling, or create it first with `mkdir build`.
+> Make sure the `build/` directory exists before compiling, or create it first with `mkdir build`. Also delete the .exe file.
 
 ---
 
