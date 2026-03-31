@@ -2,7 +2,6 @@
 .vscode/
 
 # Windows spezifisch
-*.exe
 *.obj
 *.o
 
