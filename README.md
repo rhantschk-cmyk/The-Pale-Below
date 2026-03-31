@@ -12,11 +12,11 @@ The Pale Below is a 2D Metroidvania currently in solo development. The fundament
 
 ---
 
-##Windows
+## Windows
 
-Download and run [install.exe](installer/install.exe) file in the installer folder.
+Download and run [install.exe](installer) file in the installer folder.
 
-##macOS & Linux
+## macOS & Linux
 
 ## Requirements
 
