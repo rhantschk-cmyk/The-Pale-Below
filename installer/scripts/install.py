@@ -1,30 +1,50 @@
 import os
 import requests
 import zipfile
-import subprocess
+
+print("Welcome to the Installer of ThePaleBellow.")
+confirmation = input("Do you want to continue with the Download Y/n")
 
 #konfiguration
 
-DOWNLOAD_URL = "https://github.com/rhantschk-cmyk/The-Pale-Below/archive/refs/heads/main.zip"
-GAME_NAME = "ThePaleBelow"
+if confirmation == "Y" or confirmation == "":
+    print("Setting up installation...")
 
-#download
+    DOWNLOAD_URL = "https://github.com/rhantschk-cmyk/The-Pale-Below/archive/refs/heads/main.zip"
+    GAME_NAME = "ThePaleBelow"
 
-home = os.path.expanduser("~")
-install_dir = os.path.join(home, "Games", GAME_NAME)
-zip_path = os.path.join(install_dir, "game.zip")
+    #download
 
-if not os.path.exists(install_dir):
-    os.makedirs(install_dir)
+    print("Creating installation directory...")
 
-response = requests.get(DOWNLOAD_URL, stream = True)
+    home = os.path.expanduser("~")
+    install_dir = os.path.join(home, "Games", GAME_NAME)
+    zip_path = os.path.join(install_dir, "game.zip")
 
-with open(zip_path, "wb") as f:
-    f.write(response.content)
+    if not os.path.exists(install_dir):
+        os.makedirs(install_dir)
 
-with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-    zip_ref.extractall(install_dir)
+    print("Downloading data from GitHub...")
 
-os.remove(zip_path)
+    response = requests.get(DOWNLOAD_URL, stream = True)
+
+    print("Unpacking data...")
+
+    with open(zip_path, "wb") as f:
+        f.write(response.content)
+
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(install_dir)
+
+    print("Cleaning up...")
+
+    os.remove(zip_path)
+
+    print("Installation complete. You can now close this window.")
+else:
+    print("Canceled installation.")
+
+while True:
+    pass
 
 
